@@ -3,6 +3,13 @@ $(document).ready(function() {
     const api_key = "YOUR_API_KEY";
     let inCalculation = false;
     let locations = [];
+
+    //Lazy load the plugin to support right-to-left languages such as Arabic and Hebrew.
+    maplibregl.setRTLTextPlugin(
+        'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
+        null,
+        true 
+    );
     
     let myToast = Toastify({
       text: "To be set before show!",
@@ -42,18 +49,29 @@ $(document).ready(function() {
     L.control.zoom({
       position: 'bottomright'
     }).addTo(map);
+    
+    var vectorStyleUrl = "https://vectormaps-resources.myptv.com/styles/latest/standard.json";
 
-    const tileLayer = new L.tileLayer(
-        "https://api.myptv.com/rastermaps/v1/image-tiles/{z}/{x}/{y}?size={tileSize}",
-        {
-          attribution: '© ' + new Date().getFullYear() + ', PTV Group, HERE',
-          tileSize: 256,
-          trackResize: false
-        },
-        [
-          {header: 'apiKey', value: api_key}
-        ]).addTo(map);
+    var tileLayer = L.maplibreGL({
+        attribution: '&copy; ' + new Date().getFullYear() + ' PTV Group, HERE',
+        interactive:false,
+        maxZoom: 18,
+        style: vectorStyleUrl,
+        transformRequest: (url) => {
+          let transformedUrl = url;
+          let mapsPathIndex = url.indexOf('/maps/');
+      
+          if (mapsPathIndex > 0) {
+            transformedUrl = 'https://api.myptv.com/' + url.substring(mapsPathIndex) + '?apiKey=' + api_key;
+            return {
+              url: `${transformedUrl}`
+            };
+          } 
+          return null;
+        }
+      }).addTo(map);
     map.on('click', onMapClick);
+
 
     const profiles = ['EUR_TRAILER_TRUCK','EUR_TRUCK_40T', 'EUR_TRUCK_11_99T', 'EUR_TRUCK_7_49T', 'EUR_VAN', 'EUR_CAR',
      'USA_1_PICKUP', 'USA_5_DELIVERY', 'USA_8_SEMITRAILER_5AXLE', 'AUS_LCV_LIGHT_COMMERCIAL', 'AUS_MR_MEDIUM_RIGID', 'AUS_HR_HEAVY_RIGID'];
