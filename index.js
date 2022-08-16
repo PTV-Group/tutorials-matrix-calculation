@@ -44,6 +44,7 @@ $(document).ready(function() {
     const map = new L.Map('map', {
       center: coordinate,
       zoom: 13,
+      maxZoom: 18,
       zoomControl: false
     });
     L.control.zoom({
@@ -74,7 +75,8 @@ $(document).ready(function() {
 
 
     const profiles = ['EUR_TRAILER_TRUCK','EUR_TRUCK_40T', 'EUR_TRUCK_11_99T', 'EUR_TRUCK_7_49T', 'EUR_VAN', 'EUR_CAR',
-     'USA_1_PICKUP', 'USA_5_DELIVERY', 'USA_8_SEMITRAILER_5AXLE', 'AUS_LCV_LIGHT_COMMERCIAL', 'AUS_MR_MEDIUM_RIGID', 'AUS_HR_HEAVY_RIGID'];
+     'USA_1_PICKUP', 'USA_5_DELIVERY', 'USA_8_SEMITRAILER_5AXLE', 'AUS_LCV_LIGHT_COMMERCIAL', 'AUS_MR_MEDIUM_RIGID', 'AUS_HR_HEAVY_RIGID',
+     'IMEA_TRUCK_40T', 'IMEA_TRUCK_7_49T', 'IMEA_VAN', 'IMEA_CAR'];
 
     /* For later use, we can get the profiles from vehicle_service. If we support this, profiles can be filled like this.
        Be carefull, then in function addControls() the .name is to be reactivated.
