@@ -71,8 +71,18 @@ $(document).ready(function() {
           return null;
         }
       }).addTo(map);
+      
+    var restrictionsLayer = L.tileLayer.ptvDeveloper(
+        "https://api.myptv.com/rastermaps/v1/data-tiles/{z}/{x}/{y}" +
+        '?apiKey={token}&layers={layers}', {
+            layers: 'toll',
+            token: api_key,
+            maxZoom: 18,
+            opacity: 0.5,
+            zIndex: 500
+    }).addTo(map);
+    
     map.on('click', onMapClick);
-
 
     const profiles = ['EUR_TRAILER_TRUCK','EUR_TRUCK_40T', 'EUR_TRUCK_11_99T', 'EUR_TRUCK_7_49T', 'EUR_VAN', 'EUR_CAR',
      'USA_1_PICKUP', 'USA_5_DELIVERY', 'USA_8_SEMITRAILER_5AXLE', 'AUS_LCV_LIGHT_COMMERCIAL', 'AUS_MR_MEDIUM_RIGID', 'AUS_HR_HEAVY_RIGID',
@@ -280,6 +290,10 @@ $(document).ready(function() {
           if (!first) {
             query += ',';}
           query += document.getElementById('cb_tollCosts').value;
+          if (document.getElementById("tollTime").value !== "" && document.getElementById("tollDate").value) {
+            const date = new Date(document.getElementById('tollDate').value + 'T' + document.getElementById('tollTime').value).toISOString()
+            query += "&options[tollTime]=" + date
+          }
         }
       }      
       return query;
@@ -508,6 +522,15 @@ $(document).ready(function() {
                   <input class="checkbox-type" type="checkbox" id="cb_tollCosts" checked="true" value="TOLL_COSTS" />
                   <label for="toll costs">TOLL_COSTS</label>
                 </div>
+                <br />
+                <div>
+                  <span>Toll time</span>
+                  <table style="border: none;">
+                    <tr>
+                      <td height="20px" style="text-align:right; padding: 0px 5px 0px 0px; border: none;"><input type="date" id="tollDate" value="2023-12-18"/></td>
+                      <td height="20px" style="text-align:right; border: none;"><input type="time" id="tollTime" value="12:00"/></td>
+                    </tr>
+                  </table>
                 <br />
                 <h2>Request</h2>
                 <button type="button" id="btnSendRequest" class="calc-btn">calculate matrix</button>
